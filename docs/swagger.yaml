@@ -1,0 +1,35 @@
+definitions:
+  handle.LoginReq:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: 登录
+      parameters:
+      - description: 登录
+        in: body
+        name: form
+        required: true
+        schema:
+          $ref: '#/definitions/handle.LoginReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: 登录
+      tags:
+      - UserAuth
+swagger: "2.0"
