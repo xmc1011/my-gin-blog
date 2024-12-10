@@ -119,9 +119,9 @@ func (*UserAuth) Login(c *gin.Context) {
 	session.Set(global.CTX_USER_AUTH, userAuth.ID)
 	session.Save()
 
-	// 删除 Redis 中的离线状态
-	//offlineKey := global.OFFLINE_USER + strconv.Itoa(userAuth.ID)
-	//rdb.Del(rctx, offlineKey).Result()
+	//删除 Redis 中的离线状态
+	offlineKey := global.OFFLINE_USER + strconv.Itoa(userAuth.ID)
+	rdb.Del(rctx, offlineKey).Result()
 
 	ReturnSuccess(c, LoginVO{
 		UserInfo:       *userInfo,

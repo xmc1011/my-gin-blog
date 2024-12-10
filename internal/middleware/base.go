@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
@@ -27,6 +29,13 @@ func WithGormDB(db *gorm.DB) gin.HandlerFunc {
 		ctx.Set(global.CTX_DB, db)
 		ctx.Next()
 	}
+}
+
+// WithCookieStore 基于 cookie 的 session
+func WithCookieStore(name, secret string) gin.HandlerFunc {
+	store := cookie.NewStore([]byte(secret))
+	store.Options(sessions.Options{Path: "/", MaxAge: 600})
+	return sessions.Sessions(name, store)
 }
 
 // CORS 跨域请求

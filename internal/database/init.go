@@ -14,11 +14,11 @@ import (
 )
 
 // InitGormDB initializes the database connection and repositories.
-func InitGormDB(conf *config.Config) error {
+func InitGormDB(conf *config.Config) (*gorm.DB, error) {
 	db, err := NewGormDB(conf)
 	if err != nil {
 		logger.Fatalf("Database connection failed: %v", err)
-		return err
+		return nil, err
 	}
 
 	repo.InitRepo(db)
@@ -27,12 +27,12 @@ func InitGormDB(conf *config.Config) error {
 	if conf.Server.DbAutoMigrate {
 		if err := TryAutoMigrate(db); err != nil {
 			logger.Fatalf("Database migration failed: %v", err)
-			return err
+			return nil, err
 		}
 		logger.Infof("Database migration completed successfully.")
 	}
 
-	return nil
+	return db, nil
 }
 
 // NewGormDB creates a new Gorm DB instance based on the configuration.

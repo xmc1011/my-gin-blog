@@ -15,7 +15,12 @@ func main() {
 	conf := c.ReadConfig("./config") //读取配置文件
 
 	_ = logger.InitLogger(conf)
-	database.InitGormDB(conf)
+	// 初始化 GORM 数据库
+	db, err := database.InitGormDB(conf)
+	if err != nil {
+		logger.Fatalf("Failed to initialize database: %v", err)
+		return
+	}
 	rdb := utils.InitRedis(conf)
 
 	//初始化gin
@@ -28,9 +33,12 @@ func main() {
 	} else {
 		r.Use(middleware.Recovery(true), middleware.Logger())
 	}
+
 	r.Use(middleware.CORS())
 	r.Use(middleware.WithGormDB(db))
 	r.Use(middleware.WithRedisDB(rdb))
+	r.Use(middleware.WithCookieStore(conf.Session.Name, conf.Session.Salt))
+
 	internal.RegisterHandlers(r)
 	serverPort := conf.Server.Port
 	r.Run(serverPort)
