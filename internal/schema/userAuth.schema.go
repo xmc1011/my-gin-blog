@@ -18,7 +18,7 @@ type UserAuth struct {
 	UserInfoId    int        `json:"user_info_id"`
 
 	UserInfo *model.UserInfo `json:"info"`
-	Roles    []*model.Role   `json:"roles" gorm:"many2many:user_auth_role"`
+	Roles    RoleList        `json:"roles" gorm:"many2many:user_auth_role"`
 }
 
 type UserAuthList []*UserAuth //涉及返回多个结构体进行封装

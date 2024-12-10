@@ -130,3 +130,31 @@ func (*UserAuth) Login(c *gin.Context) {
 		CommentLikeSet: commentLikeSet,
 	})
 }
+
+// @Summary 退出登录
+// @Description 退出登录
+// @Tags UserAuth
+// @Accept json
+// @Produce json
+// @Success 0 {object} string
+// @Router /logout [post]
+func (*UserAuth) Logout(c *gin.Context) {
+	c.Set(global.CTX_USER_AUTH, nil)
+	// 已经退出登录
+
+	auth, _ := CurrentUserAuth(c)
+	if auth == nil {
+		ReturnSuccess(c, nil)
+		return
+	}
+	session := sessions.Default(c)
+	session.Delete(global.CTX_USER_AUTH)
+	session.Save()
+
+	// 删除 Redis 中的在线状态
+	rdb := GetRDB(c)
+	onlineKey := global.ONLINE_USER + strconv.Itoa(auth.ID)
+	rdb.Del(rctx, onlineKey)
+	ReturnSuccess(c, nil)
+
+}

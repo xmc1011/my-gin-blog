@@ -25,5 +25,6 @@ func RegisterHandlers(r *gin.Engine) {
 func registerBaseHandler(r *gin.Engine) {
 	base := r.Group("/api")
 
-	base.POST("/login", userAuthAPI.Login) // 登录
+	base.POST("/login", userAuthAPI.Login)   // 登录
+	base.POST("/logout", userAuthAPI.Logout) // 退出登录
 }

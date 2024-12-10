@@ -32,4 +32,19 @@ paths:
       summary: 登录
       tags:
       - UserAuth
+  /logout:
+    post:
+      consumes:
+      - application/json
+      description: 退出登录
+      produces:
+      - application/json
+      responses:
+        "0":
+          description: ""
+          schema:
+            type: string
+      summary: 退出登录
+      tags:
+      - UserAuth
 swagger: "2.0"

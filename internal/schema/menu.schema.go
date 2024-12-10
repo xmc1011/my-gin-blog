@@ -1,7 +1,9 @@
-package model
+package schema
+
+import "my-blog/internal/database/model"
 
 type Menu struct {
-	Model
+	model.Model
 	ParentId     int    `json:"parent_id"`
 	Name         string `gorm:"uniqueIndex:idx_name_and_path;type:varchar(20)" json:"name"` // 菜单名称
 	Path         string `gorm:"uniqueIndex:idx_name_and_path;type:varchar(50)" json:"path"` // 路由地址
@@ -15,4 +17,7 @@ type Menu struct {
 	External     bool   `json:"is_external"`                                                // 是否外链
 	ExternalLink string `gorm:"type:varchar(255)" json:"external_link"`                     // 外链地址
 
+	Roles RoleList `json:"roles" gorm:"many2many:role_menu"`
 }
+
+type MenuList []*Menu

@@ -68,3 +68,49 @@ func (a *RepoUserAuth) UpdateUserAuthLoginInfo(id int, ipAddress, ipSource strin
 	result := a.GetDB().Where("id", id).Updates(userAuth)
 	return result.Error
 }
+
+func (a *RepoUserAuth) GetUserAuthInfoById(id int) (*schema.UserAuth, error) {
+	// 查询 UserAuth 的基础数据
+	userAuth := new(model.UserAuth)
+	result := a.GetDB().Where("id = ?", id).First(userAuth)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	// 查询关联的 Roles 数据
+	var roles schema.RoleList
+	roleResult := a.db.Table("user_auth_role").
+		Select("role.*").
+		Joins("JOIN role ON role.id = user_auth_role.role_id").
+		Where("user_auth_role.user_auth_id = ?", id).
+		Find(&roles)
+
+	if roleResult.Error != nil {
+		return nil, roleResult.Error
+	}
+
+	// 查询关联的 UserInfo 数据
+	var userInfo model.UserInfo
+	userInfoResult := a.db.Where("id = ?", userAuth.UserInfoId).First(&userInfo)
+	if userInfoResult.Error != nil {
+		return nil, userInfoResult.Error
+	}
+
+	// 转换为 schema.UserAuth
+	schemaUserAuth := &schema.UserAuth{
+		Model:         userAuth.Model,
+		Username:      userAuth.Username,
+		Password:      userAuth.Password,
+		LoginType:     userAuth.LoginType,
+		IpAddress:     userAuth.IpAddress,
+		IpSource:      userAuth.IpSource,
+		LastLoginTime: userAuth.LastLoginTime,
+		IsDisable:     userAuth.IsDisable,
+		IsSuper:       userAuth.IsSuper,
+		UserInfoId:    userAuth.UserInfoId,
+		UserInfo:      &userInfo,
+		Roles:         roles,
+	}
+
+	return schemaUserAuth, nil
+}

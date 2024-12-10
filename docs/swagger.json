@@ -34,6 +34,29 @@
                     }
                 }
             }
+        },
+        "/logout": {
+            "post": {
+                "description": "退出登录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserAuth"
+                ],
+                "summary": "退出登录",
+                "responses": {
+                    "0": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
